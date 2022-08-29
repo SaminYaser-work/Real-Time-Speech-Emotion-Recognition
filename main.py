@@ -3,6 +3,7 @@ import librosa
 # import skimage.io
 import numpy as np
 from tensorflow.keras.models import load_model
+import subesco_original
 # from tensorflow.keras.preprocessing.image import load_img, img_to_array
 # from tensorflow.keras.applications.vgg16 import preprocess_input
 # import tensorflow
@@ -14,21 +15,27 @@ classes = ['Angry 😠', 'Disgust 🤮', 'Fear 😨', 'Happy 😃',
 
 
 def mfcc(data, sample_rate, n_mfcc=40):
-    mfcc = np.mean(librosa.feature.mfcc(
-        y=data, sr=sample_rate, n_mfcc=n_mfcc).T, axis=0)
+    # mfcc = np.mean(librosa.feature.mfcc(
+    #     y=data, sr=sample_rate, n_mfcc=n_mfcc).T, axis=0)
+    mfcc = librosa.feature.mfcc(
+        y=data, sr=sample_rate, n_mfcc=n_mfcc).T
     return mfcc
 
 
 def chroma(data, sample_rate):
     stft = np.abs(librosa.stft(data))
-    chroma_stft = np.mean(librosa.feature.chroma_stft(
-        S=stft, sr=sample_rate).T, axis=0)
+    # chroma_stft = np.mean(librosa.feature.chroma_stft(
+    #     S=stft, sr=sample_rate).T, axis=0)
+    chroma_stft = librosa.feature.chroma_stft(
+        S=stft, sr=sample_rate).T
     return chroma_stft
 
 
 def melSpectogram(y, sr):
-    mel = np.mean(librosa.feature.melspectrogram(
-        y=y, sr=sr).T, axis=0)
+    # mel = np.mean(librosa.feature.melspectrogram(
+    #     y=y, sr=sr).T, axis=0)
+    mel = librosa.feature.melspectrogram(
+        y=y, sr=sr).T
     return mel
 
 
@@ -43,20 +50,37 @@ def rms(y):
 
 
 def cnnBig_prediction(data, sample_rate):
-    cnnBig = load_model('./models/subesco_v1_cnn2.h5')
+    cnnBig = load_model('./models/cnnBig')
     feature = np.array([])
 
-    feature = np.hstack((feature, chroma(data, sample_rate)))
-    feature = np.hstack((feature, mfcc(data, sample_rate)))
-    feature = np.hstack((feature, melSpectogram(data, sample_rate)))
+    # feature = np.hstack((feature, chroma(data, sample_rate)))
+    # feature = np.hstack((feature, mfcc(data, sample_rate)))
+    # feature = np.hstack((feature, melSpectogram(data, sample_rate)))
 
-    feature = np.expand_dims(feature, axis=1)
-    feature = np.expand_dims(feature, axis=2)
-    feature = np.swapaxes(feature, 0, 1)
+    f1 = chroma(data, sample_rate)
+    print(f1.shape)
+    f2 = mfcc(data, sample_rate)
+    print(f2.shape)
+    f3 = melSpectogram(data, sample_rate)
+    print(f3.shape)
 
-    pred = cnnBig.predict(feature)
-    y_pred = np.argmax(pred, axis=1)
-    return classes[y_pred[0]]
+    feature = np.concatenate((f1, f2, f3), axis=1)
+
+    print(feature.shape)
+
+    feature = np.expand_dims(feature, axis=0)
+    print(feature.shape)
+
+    # feature = np.expand_dims(feature, axis=1)
+    # print(feature.shape)
+    # feature = np.expand_dims(feature, axis=2)
+    # print(feature.shape)
+    feature = np.swapaxes(feature, 0, 2)
+    print(feature.shape)
+
+    # pred = cnnBig.predict(feature)
+    # y_pred = np.argmax(pred, axis=1)
+    # return classes[y_pred[0]]
 
 
 # def vgg16_prediction(y, sr):
@@ -77,11 +101,14 @@ def cnnBig_prediction(data, sample_rate):
 
 def get_emo():
     y, sr = librosa.load('./temp/audio.webm')
+    # y, sr = librosa.load('sounds/YAF_burn_angry.wav', sr=None)
 
-    cnnBig_res = cnnBig_prediction(y, sr)
+    subesco = subesco_original.get_emotion(y, sr)
+
+    # cnnBig_res = cnnBig_prediction(y, sr)
 
     res = {
-        'emotion': cnnBig_res,
+        "results": [subesco]
     }
 
     return res
