@@ -1,6 +1,7 @@
 import "./App.css";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useEffect, useState } from "react";
+import Timer from "./components/Timer";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -83,8 +84,6 @@ function App() {
     },
   ]);
 
-  console.log(emotion[0].name);
-
   // useEffect(() => {
   //   const getEmotion = async (blob) => {
   //     console.log("Making request from frontend", blob);
@@ -116,20 +115,40 @@ function App() {
   //   return () => (audioURL = "");
   // }, [audioURL]);
 
+  useEffect(() => {
+    if (!previewAudioStream?.active || status !== "recording") return;
+
+    let interval;
+    const stream = new MediaRecorder(previewAudioStream);
+    let chunks = [];
+    stream.ondataavailable = (e) => chunks.push(e.data);
+    stream.start();
+    interval = setInterval(() => {
+      const blob = new Blob(chunks.splice(0, chunks.length), {
+        type: "audio/wav",
+      });
+      console.log(blob);
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [status]);
+
   return (
     <div className="App">
       <h1>Real Time Speech Emotion Recognition</h1>
 
       <div>
         <audio className="mx-auto my-10" src={mediaBlobUrl} controls />
-        <audio className="mx-auto my-10" src={previewAudioStream} controls />
+        <div className="text-2xl mb-3">
+          <Timer status={status} />
+        </div>
         <p className="mb-3">
-          {status === "acquiring_media" && "⏳ Acquiring media..."}
-          {status === "idle" && "🎙️ Ready for Input..."}
+          {status === "acquiring_media" && "⏳ Getting permission..."}
+          {status === "idle" && "🎙️ Ready for Input"}
           {status === "recording" && "🔴 Recording..."}
           {status === "stopping" && "❕ Stopping..."}
           {status === "stopped" && "❌ Stopped"}
-          {console.log("Recording status: ", status)}
+          {/* {console.log("Recording status: ", status)} */}
         </p>
         <div className="text-3xl space-x-5">
           <button
