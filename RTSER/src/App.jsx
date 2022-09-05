@@ -68,6 +68,8 @@ export const options = {
   },
 };
 
+const UPDATE_RATE = 2000;
+
 function App() {
   const {
     status,
@@ -104,9 +106,8 @@ function App() {
         method: "post",
         body: fd,
       });
-      console.log(res);
       const data = await res.json();
-      console.log(data);
+      console.log("Updating chart...");
       setEmotion(data.results);
     } catch (err) {
       console.error("Failed to get emotion. ", err);
@@ -127,7 +128,7 @@ function App() {
       if (stream.state != "inactive") {
         stream.stop();
       }
-    }, 3000);
+    }, UPDATE_RATE);
     stream.start();
   };
 
@@ -135,7 +136,7 @@ function App() {
     if (status !== "recording") return;
 
     let interval;
-    interval = setInterval(() => updateChart(), 3000);
+    interval = setInterval(() => updateChart(), UPDATE_RATE);
 
     return () => {
       clearInterval(interval);
