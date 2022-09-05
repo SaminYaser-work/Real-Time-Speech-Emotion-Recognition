@@ -14,11 +14,14 @@ def get_emotion(data, sr):
 
     xt, _ = librosa.effects.trim(data, top_db=TOP_DB)
 
-    if len(xt) > TOTAL_LEGNTH:
-        print("Too long")
-        return -1
+    # For debugging
+    print(len(xt))
 
-    padded_x = np.pad(xt, (0, TOTAL_LEGNTH - len(xt)), 'constant')
+    if len(xt) > TOTAL_LEGNTH:
+        padded_x = xt[:TOTAL_LEGNTH]
+    else:
+        padded_x = np.pad(xt, (0, TOTAL_LEGNTH - len(xt)), 'constant')
+
     final = nr.reduce_noise(padded_x, sr)
 
     mel = librosa.feature.melspectrogram(
@@ -30,9 +33,9 @@ def get_emotion(data, sr):
     f_mel = np.expand_dims(f_mel, -1)
 
     pred = model.predict(f_mel)
-    print(pred)
+    # print(pred)
     y_pred = np.argmax(pred, axis=1)
-    print(y_pred)
+    # print(y_pred)
 
     name = "SUBESCO"
     values = [round(x*100, 2) for x in pred[0]]

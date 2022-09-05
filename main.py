@@ -100,7 +100,7 @@ def cnnBig_prediction(data, sample_rate):
 
 
 def get_emo():
-    y, sr = librosa.load('./temp/audio.webm')
+    y, sr = librosa.load('./temp/audio.wav')
     # y, sr = librosa.load('sounds/YAF_burn_angry.wav', sr=None)
 
     subesco = subesco_original.get_emotion(y, sr)

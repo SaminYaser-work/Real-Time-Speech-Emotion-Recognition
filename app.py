@@ -17,8 +17,9 @@ def index():
 def get_emo():
     try:
         data = request.files['audio']
-        data.save('./temp/audio.webm')
+        data.save('./temp/audio.wav')
         res = main.get_emo()
+        print(res)  # For debugging
         return app.response_class(response=json.dumps(res), status=200, mimetype='application/json')
     except Exception as e:
         print('Error in server:', str(e))

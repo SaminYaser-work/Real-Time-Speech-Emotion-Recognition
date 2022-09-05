@@ -12,8 +12,8 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import loadingGif from "./assets/loading.gif";
-import errorGif from "./assets/error.gif";
+// import loadingGif from "./assets/loading.gif";
+// import errorGif from "./assets/error.gif";
 
 ChartJS.register(
   CategoryScale,
@@ -71,11 +71,16 @@ export const options = {
 function App() {
   const {
     status,
+    error,
     startRecording,
     stopRecording,
     mediaBlobUrl,
     previewAudioStream,
-  } = useReactMediaRecorder({ audio: true, askPermissionOnMount: true });
+  } = useReactMediaRecorder({
+    audio: true,
+    askPermissionOnMount: true,
+    blobPropertyBag: { type: "audio/wav" },
+  });
 
   let [emotion, setEmotion] = useState([
     {
@@ -84,53 +89,57 @@ function App() {
     },
   ]);
 
-  // useEffect(() => {
-  //   const getEmotion = async (blob) => {
-  //     console.log("Making request from frontend", blob);
+  if (error) {
+    console.log(error);
+  }
 
-  //     const fd = new FormData();
-  //     fd.append("audio", blob);
+  const getEmotion = async (blob) => {
+    console.log("Making request from frontend", blob);
 
-  //     fetch("http://localhost:8000/get-emo", {
-  //       method: "post",
-  //       body: fd,
-  //     })
-  //       .then((res) => res.json())
-  //       .then((data) => setEmotion(data.results))
-  //       .catch((err) => {
-  //         console.error("Failed to get emotion. ", err);
-  //       });
-  //   };
+    const fd = new FormData();
+    fd.append("audio", blob);
 
-  //   if (audioURL !== "") {
-  //     fetch(audioURL)
-  //       .then((response) => response.blob())
-  //       .then((data) => getEmotion(data))
-  //       .catch((err) =>
-  //         console.error("Failed to fetch blob from audio URL", err)
-  //       );
-  //   }
+    try {
+      const res = await fetch("http://localhost:8000/get-emo", {
+        method: "post",
+        body: fd,
+      });
+      console.log(res);
+      const data = await res.json();
+      console.log(data);
+      setEmotion(data.results);
+    } catch (err) {
+      console.error("Failed to get emotion. ", err);
+    }
+  };
 
-  //   // Cleanup
-  //   return () => (audioURL = "");
-  // }, [audioURL]);
+  const updateChart = () => {
+    let chunks = [];
+    const stream = new MediaRecorder(previewAudioStream);
+    stream.ondataavailable = (e) => {
+      chunks.push(e.data);
+    };
+
+    // Send to server
+    stream.onstop = (e) => getEmotion(new Blob(chunks));
+
+    setTimeout(() => {
+      if (stream.state != "inactive") {
+        stream.stop();
+      }
+    }, 3000);
+    stream.start();
+  };
 
   useEffect(() => {
-    if (!previewAudioStream?.active || status !== "recording") return;
+    if (status !== "recording") return;
 
     let interval;
-    const stream = new MediaRecorder(previewAudioStream);
-    let chunks = [];
-    stream.ondataavailable = (e) => chunks.push(e.data);
-    stream.start();
-    interval = setInterval(() => {
-      const blob = new Blob(chunks.splice(0, chunks.length), {
-        type: "audio/wav",
-      });
-      console.log(blob);
-    }, 3000);
+    interval = setInterval(() => updateChart(), 3000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+    };
   }, [status]);
 
   return (
