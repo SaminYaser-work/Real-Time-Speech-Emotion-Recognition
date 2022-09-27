@@ -108,7 +108,7 @@ function App() {
       });
       const data = await res.json();
       console.log("Updating chart...");
-      setEmotion(data.results);
+      setEmotion(data.results[1]);
     } catch (err) {
       console.error("Failed to get emotion. ", err);
     }
@@ -125,6 +125,7 @@ function App() {
     stream.onstop = (e) => getEmotion(new Blob(chunks));
 
     setTimeout(() => {
+      console.log("in set timeout");
       if (stream.state != "inactive") {
         stream.stop();
       }

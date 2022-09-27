@@ -4,6 +4,7 @@ import librosa
 import numpy as np
 from tensorflow.keras.models import load_model
 import subesco_original
+import resnet_sadhin
 # from tensorflow.keras.preprocessing.image import load_img, img_to_array
 # from tensorflow.keras.applications.vgg16 import preprocess_input
 # import tensorflow
@@ -104,11 +105,12 @@ def get_emo():
     # y, sr = librosa.load('sounds/YAF_burn_angry.wav', sr=None)
 
     subesco = subesco_original.get_emotion(y, sr)
+    resnet = resnet_sadhin.get_emotion(y, sr)
 
     # cnnBig_res = cnnBig_prediction(y, sr)
 
     res = {
-        "results": [subesco]
+        "results": [subesco, resnet]
     }
 
     return res
