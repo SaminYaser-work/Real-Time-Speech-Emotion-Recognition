@@ -7,6 +7,8 @@ app = Flask(__name__, static_url_path='',
             static_folder='RTSER/dist', template_folder='./RTSER/dist')
 CORS(app)  # comment this on deployment
 
+audio_file_path = './temp/audio.webm'
+
 
 @app.route("/")
 def index():
@@ -17,9 +19,8 @@ def index():
 def get_emo():
     try:
         data = request.files['audio']
-        data.save('./temp/audio.wav')
-        res = main.get_emo()
-        print(res)  # For debugging
+        data.save(audio_file_path)
+        res = main.get_emo(audio_file_path)
         return app.response_class(response=json.dumps(res), status=200, mimetype='application/json')
     except Exception as e:
         print('Error in server:', str(e))
