@@ -1,5 +1,4 @@
 import librosa
-import numpy as np
 import trained_models.VGGish.predict as vggish
 
 
