@@ -167,7 +167,7 @@ function App() {
         <p className="mb-3">
           {status === "acquiring_media" && "⏳ Getting permission..."}
           {status === "idle" && "🎙️ Ready for Input"}
-          {status === "recording" && "🔴 Recording..."}
+          {status === "recording" && "🔴 Listening..."}
           {status === "stopping" && "❕ Stopping..."}
           {status === "stopped" && "❌ Stopped"}
           {/* {console.log("Recording status: ", status)} */}
@@ -180,7 +180,7 @@ function App() {
             onClick={startRecording}
             disabled={status === "recording"}
           >
-            Start Speaking
+            Start
           </button>
 
           <button
@@ -190,7 +190,7 @@ function App() {
             onClick={stopRecording}
             disabled={status !== "recording"}
           >
-            Stop Speaking
+            Stop
           </button>
         </div>
       </div>
