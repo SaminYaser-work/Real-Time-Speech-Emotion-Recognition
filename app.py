@@ -1,6 +1,7 @@
 from flask_cors import CORS
 from flask import Flask, request, json, render_template
 import main
+from waitress import serve
 
 
 app = Flask(__name__, static_url_path='',
@@ -28,4 +29,5 @@ def get_emo():
 
 
 if __name__ == '__main__':
-    app.run(host='localhost', debug=True, port=8000, use_reloader=True)
+    # app.run(host='localhost', debug=True, port=8000, use_reloader=True)
+    serve(app, host='0.0.0.0', port=8000, threads=4)

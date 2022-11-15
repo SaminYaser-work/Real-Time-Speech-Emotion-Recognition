@@ -101,9 +101,29 @@ function App() {
     },
   ]);
 
+  let [color, setColor] = useState({
+    c1: [],
+    c2: [],
+  });
+
   if (error) {
     console.log(error);
   }
+
+  const assignColor = (datapoints, highColor, normalColor) => {
+    const max = Math.max(...datapoints);
+    const res = [];
+
+    datapoints.forEach((point) => {
+      if (point === max) {
+        res.push(highColor);
+      } else {
+        res.push(normalColor);
+      }
+    });
+
+    return res;
+  };
 
   const getEmotion = async (blob) => {
     console.log("Making request from frontend", blob);
@@ -120,6 +140,21 @@ function App() {
       const data = await res.json();
       console.timeEnd("Request");
       setEmotion(data.results);
+      const c1 = assignColor(
+        data.results[0].values,
+        "rgba(255, 99, 132, 1)",
+        "rgba(255, 99, 132, 0.3)"
+      );
+      const c2 = assignColor(
+        data.results[1].values,
+        "rgba(0, 150, 255, 1)",
+        "rgba(0, 150, 255, 0.3)"
+      );
+      // console.log(c1, c2);
+      setColor({
+        c1: c1,
+        c2: c2,
+      });
       console.log(data.results);
     } catch (err) {
       console.error("Failed to get emotion. ", err);
@@ -195,6 +230,7 @@ function App() {
         </div>
       </div>
 
+      {console.log(color)}
       <div className="mt-5">
         <Bar
           data={{
@@ -205,13 +241,15 @@ function App() {
                 label: emotion[0].name,
                 data: emotion[0].values,
                 borderColor: "rgb(255, 99, 132)",
-                backgroundColor: "rgba(255, 99, 132, 0.5)",
+                // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                backgroundColor: color.c1,
               },
               {
                 label: emotion[1].name,
                 data: emotion[1].values,
                 borderColor: "rgb(0, 71, 171)",
-                backgroundColor: "rgba(0, 150, 255, 0.5)",
+                // backgroundColor: "rgba(0, 150, 255, 0.5)",
+                backgroundColor: color.c2,
               },
             ],
           }}
