@@ -7,4 +7,5 @@ Write-Output ""
 Write-Output "Starting Flask Server"
 Write-Output "====================="
 Set-Location ..
-flask run -h localhost -p 8000
+# flask run -h localhost -p 8000
+python -m app

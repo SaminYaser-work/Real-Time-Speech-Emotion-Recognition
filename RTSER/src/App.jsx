@@ -1,4 +1,6 @@
 import "./App.css";
+import { MediaRecorder, register } from "extendable-media-recorder";
+import { connect } from "extendable-media-recorder-wav-encoder";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useEffect, useState } from "react";
 import Timer from "./components/Timer";
@@ -126,44 +128,48 @@ function App() {
   };
 
   const getEmotion = async (blob) => {
-    console.log("Making request from frontend", blob);
+    console.log("Sending audio: ", blob);
 
     const fd = new FormData();
     fd.append("audio", blob);
 
     try {
-      console.time("Request");
+      console.time("update");
       const res = await fetch("http://localhost:8000/get-emo", {
         method: "post",
         body: fd,
       });
       const data = await res.json();
-      console.timeEnd("Request");
       setEmotion(data.results);
       const c1 = assignColor(
         data.results[0].values,
         "rgba(255, 99, 132, 1)",
-        "rgba(255, 99, 132, 0.3)"
+        "rgba(255, 99, 132, 0.2)"
       );
       const c2 = assignColor(
         data.results[1].values,
         "rgba(0, 150, 255, 1)",
-        "rgba(0, 150, 255, 0.3)"
+        "rgba(0, 150, 255, 0.2)"
       );
       // console.log(c1, c2);
       setColor({
         c1: c1,
         c2: c2,
       });
-      console.log(data.results);
+      console.timeEnd("update");
+      // console.log(data.results);
     } catch (err) {
       console.error("Failed to get emotion. ", err);
     }
   };
 
-  const updateChart = () => {
+  const updateChart = async () => {
     let chunks = [];
-    const stream = new MediaRecorder(previewAudioStream);
+    await register(await connect());
+    const stream = new MediaRecorder(previewAudioStream, {
+      mimeType: "audio/wav",
+    });
+    // const stream = new MediaRecorder(previewAudioStream);
     stream.ondataavailable = (e) => {
       chunks.push(e.data);
     };
@@ -230,7 +236,6 @@ function App() {
         </div>
       </div>
 
-      {console.log(color)}
       <div className="mt-5">
         <Bar
           data={{

@@ -8,7 +8,7 @@ app = Flask(__name__, static_url_path='',
             static_folder='RTSER/dist', template_folder='./RTSER/dist')
 CORS(app)  # comment this on deployment
 
-audio_file_path = './temp/audio.webm'
+audio_file_path = './temp/audio.wav'
 
 
 @app.route("/")
