@@ -1,6 +1,6 @@
 import "./App.css";
-import { MediaRecorder, register } from "extendable-media-recorder";
-import { connect } from "extendable-media-recorder-wav-encoder";
+import { MediaRecorder as EMR, register } from "extendable-media-recorder";
+// import { connect } from "extendable-media-recorder-wav-encoder";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useEffect, useState } from "react";
 import Timer from "./components/Timer";
@@ -76,7 +76,7 @@ export const options = {
   },
 };
 
-const UPDATE_RATE = 2000;
+const UPDATE_RATE = 3000;
 
 function App() {
   const {
@@ -101,11 +101,16 @@ function App() {
       name: "...",
       values: [0, 0, 0, 0, 0, 0, 0],
     },
+    {
+      name: "...",
+      values: [0, 0, 0, 0, 0, 0, 0],
+    },
   ]);
 
   let [color, setColor] = useState({
     c1: [],
     c2: [],
+    c3: [],
   });
 
   if (error) {
@@ -151,10 +156,16 @@ function App() {
         "rgba(0, 150, 255, 1)",
         "rgba(0, 150, 255, 0.2)"
       );
+      const c3 = assignColor(
+        data.results[2].values,
+        "rgba(223, 255, 0, 1)",
+        "rgba(223, 255, 0, 0.2)"
+      );
       // console.log(c1, c2);
       setColor({
         c1: c1,
         c2: c2,
+        c3: c3,
       });
       console.timeEnd("update");
       // console.log(data.results);
@@ -165,11 +176,11 @@ function App() {
 
   const updateChart = async () => {
     let chunks = [];
-    await register(await connect());
-    const stream = new MediaRecorder(previewAudioStream, {
-      mimeType: "audio/wav",
-    });
-    // const stream = new MediaRecorder(previewAudioStream);
+    // await register(await connect());
+    // const stream = new EMR(previewAudioStream, {
+    //   mimeType: "audio/wav",
+    // });
+    const stream = new MediaRecorder(previewAudioStream);
     stream.ondataavailable = (e) => {
       chunks.push(e.data);
     };
@@ -255,6 +266,13 @@ function App() {
                 borderColor: "rgb(0, 71, 171)",
                 // backgroundColor: "rgba(0, 150, 255, 0.5)",
                 backgroundColor: color.c2,
+              },
+              {
+                label: emotion[2].name,
+                data: emotion[2].values,
+                borderColor: "rgb(223, 255, 70)",
+                // backgroundColor: "rgba(0, 150, 255, 0.5)",
+                backgroundColor: color.c3,
               },
             ],
           }}
