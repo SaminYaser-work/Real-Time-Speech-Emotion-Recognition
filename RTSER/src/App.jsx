@@ -76,7 +76,7 @@ export const options = {
   },
 };
 
-const UPDATE_RATE = 3000;
+const UPDATE_RATE = 2000;
 
 function App() {
   const {
@@ -112,6 +112,8 @@ function App() {
     c2: [],
     c3: [],
   });
+
+  let [showClass, setShowClass] = useState(true);
 
   if (error) {
     console.log(error);
@@ -247,38 +249,67 @@ function App() {
         </div>
       </div>
 
-      <div className="mt-5">
-        <Bar
-          data={{
-            labels: classes,
-            backgroundColor: "rgba(255, 99, 132, 0.5)",
-            datasets: [
-              {
-                label: emotion[0].name,
-                data: emotion[0].values,
-                borderColor: "rgb(255, 99, 132)",
-                // backgroundColor: "rgba(255, 99, 132, 0.5)",
-                backgroundColor: color.c1,
-              },
-              {
-                label: emotion[1].name,
-                data: emotion[1].values,
-                borderColor: "rgb(0, 71, 171)",
-                // backgroundColor: "rgba(0, 150, 255, 0.5)",
-                backgroundColor: color.c2,
-              },
-              {
-                label: emotion[2].name,
-                data: emotion[2].values,
-                borderColor: "rgb(223, 255, 70)",
-                // backgroundColor: "rgba(0, 150, 255, 0.5)",
-                backgroundColor: color.c3,
-              },
-            ],
-          }}
-          options={options}
-        />
+      <div className="text-3xl space-x-5">
+        <button
+          className={"btn-primary"}
+          onClick={() => setShowClass((prev) => !prev)}
+        >
+          {showClass ? "Show Probabilities" : "Show Class"}
+        </button>
       </div>
+
+      {showClass ? (
+        <div className="mt-5 flex justify-center">
+          <table>
+            <tbody>
+              {emotion.map(
+                (e, i) =>
+                  e.name != "..." && (
+                    <tr key={i} className="text-4xl">
+                      <th>{e.name} : </th>
+                      <th>
+                        {classes[e.values.indexOf(Math.max(...e.values))]}
+                      </th>
+                    </tr>
+                  )
+              )}
+            </tbody>
+          </table>
+        </div>
+      ) : (
+        <div className="mt-5">
+          <Bar
+            data={{
+              labels: classes,
+              backgroundColor: "rgba(255, 99, 132, 0.5)",
+              datasets: [
+                {
+                  label: emotion[0].name,
+                  data: emotion[0].values,
+                  borderColor: "rgb(255, 99, 132)",
+                  // backgroundColor: "rgba(255, 99, 132, 0.5)",
+                  backgroundColor: color.c1,
+                },
+                {
+                  label: emotion[1].name,
+                  data: emotion[1].values,
+                  borderColor: "rgb(0, 71, 171)",
+                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
+                  backgroundColor: color.c2,
+                },
+                {
+                  label: emotion[2].name,
+                  data: emotion[2].values,
+                  borderColor: "rgb(223, 255, 70)",
+                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
+                  backgroundColor: color.c3,
+                },
+              ],
+            }}
+            options={options}
+          />
+        </div>
+      )}
     </div>
   );
 }
