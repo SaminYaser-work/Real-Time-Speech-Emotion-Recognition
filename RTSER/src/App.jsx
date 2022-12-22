@@ -26,14 +26,26 @@ ChartJS.register(
   Legend
 );
 
+// const classes = [
+//   "Angry 😠",
+//   "Disgust 🤮",
+//   "Fear 😨",
+//   "Happy 😃",
+//   "Neutral 😐",
+//   "Sad 😭",
+//   "Surprised 😲",
+// ];
+
+// const classes = ["🤮😠", "🤮😠", "😲😨", "😃", "😐", "😭", "😲😨"];
+
 const classes = [
-  "Angry 😠",
-  "Disgust 🤮",
-  "Fear 😨",
-  "Happy 😃",
-  "Neutral 😐",
-  "Sad 😭",
-  "Surprised 😲",
+  "Angry / Disgust",
+  "Angry / Disgust",
+  "Fear / Surprised",
+  "Happy",
+  "Neutral",
+  "Sad",
+  "Fear / Surprised",
 ];
 
 export const options = {

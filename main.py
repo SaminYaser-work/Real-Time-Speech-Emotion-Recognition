@@ -1,49 +1,72 @@
 import librosa
+import numpy as np
+from datetime import datetime
+import soundfile as sf
 import trained_models.VGGish.predict as vggish
-import trained_models.YAMNET.predict as yamnet
+# import trained_models.YAMNET.predict as yamnet
 import trained_models.HuBERT.predict as hubert
 from timeit import default_timer as timer
 
 
-weights = {
-    'vggish': 0.5061122987605159,
-    'hubert': 0.8652093632169002
+# neutral class for silent clips
+neutral = [0.0, 0.0, 0.0, 0.0, 1.0, 0.0, 0.0]
+silence = {
+    "results": [
+        {
+            "name": "VGGish",
+            "values": neutral
+        },
+        {
+            "name": "HuBERT",
+            "values": neutral
+        },
+        {
+            "name": "Meta Model",
+            "values": neutral
+        }
+    ]
+}
+
+placeholder = {
+    "name": "Placeholder",
+    "values": neutral
 }
 
 
 def get_emo(path):
-    y, sr = librosa.load(path, sr=16000)
-    # y, _ = librosa.effects.trim(y, top_db=25)
+    start = timer()
 
-    # if len(y) < 16000:
-    #     y = librosa.util.fix_length(y, 16000)
+    y, sr = librosa.load(path, sr=16000)
+    avg_rms = librosa.feature.rms(y=y).mean()
+    if avg_rms < 0.01:
+        return silence
 
     vggish_res = vggish.get_emotion(y, sr)
-    # yamnet_res = yamnet.get_emotion(y, sr)
     hubert_res = hubert.get_emotion(y, sr)
 
-    wa = []
-    a = []
+    end = timer()
+    with open('logs.txt', 'a') as f:
+        f.write(f'{end - start}\n')
 
-    for i in range(7):
-        fwa = (
-            (vggish_res['values'][i] * weights['vggish']) +
-            (hubert_res['values'][i] * weights['hubert'])
-        ) / (weights['vggish'] + weights['hubert'])
+    # get current time
+    time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
+    vggish_emo = np.argmax(vggish_res['values'])
+    hubert_emo = np.argmax(hubert_res['values'])
+    filename = f'{time}_{vggish_emo}_{hubert_emo}'
+    sf.write(f'./runs/{filename}.wav', y, sr)
 
-        fa = (vggish_res['values'][i] + hubert_res['values'][i]) / 2
+    # Meta Model
+    # meta_values = hubert_res['values']
+    # meta_values[vggish_emo] += 5.0
+    # meta_res = {
+    #     'name': 'Meta Model',
+    #     'values': meta_values
+    # }
 
-        wa.append(fwa)
-        a.append(fa)
-
-    # Average
-    meta_res = {
-        'name': 'Meta Model',
-        'values': a
+    res = {
+        "results": [vggish_res, hubert_res, placeholder]
     }
 
-    print(wa, '\n', a)
+    # print(res)
 
-    return {
-        "results": [vggish_res, hubert_res, meta_res]
-    }
+    return res
