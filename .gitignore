@@ -5,3 +5,5 @@ trained_models
 venv/
 trained_models.tar.gz
 runs
+.env
+pypackages
