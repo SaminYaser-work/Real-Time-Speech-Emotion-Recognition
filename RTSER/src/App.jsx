@@ -46,6 +46,13 @@ const classes = [
   "Fear / Surprised",
 ];
 
+colors = [
+  ["rgba(255, 99, 132, 1)", "rgba(255, 99, 132, 0.2)"],
+  ["rgba(0, 150, 255, 1)", "rgba(0, 150, 255, 0.2)"],
+  ["rgba(223, 255, 0, 1)", "rgba(223, 255, 0, 0.2)"],
+  ["rgba(255, 127, 80 1)", "rgba(255, 127, 80, 0.2)"],
+];
+
 export const options = {
   responsive: true,
   plugins: {
