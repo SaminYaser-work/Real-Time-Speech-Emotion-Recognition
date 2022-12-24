@@ -1,5 +1,5 @@
 import "./App.css";
-import { MediaRecorder as EMR, register } from "extendable-media-recorder";
+// import { MediaRecorder as EMR, register } from "extendable-media-recorder";
 // import { connect } from "extendable-media-recorder-wav-encoder";
 import { useReactMediaRecorder } from "react-media-recorder";
 import { useEffect, useState } from "react";
@@ -14,8 +14,6 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-// import loadingGif from "./assets/loading.gif";
-// import errorGif from "./assets/error.gif";
 
 ChartJS.register(
   CategoryScale,
@@ -26,15 +24,15 @@ ChartJS.register(
   Legend
 );
 
-// const classes = [
-//   "Angry 😠",
-//   "Disgust 🤮",
-//   "Fear 😨",
-//   "Happy 😃",
-//   "Neutral 😐",
-//   "Sad 😭",
-//   "Surprised 😲",
-// ];
+const classes_bar = [
+  "Angry 😠",
+  "Disgust 🤮",
+  "Fear 😨",
+  "Happy 😃",
+  "Neutral 😐",
+  "Sad 😭",
+  "Surprised 😲",
+];
 
 // const classes = ["🤮😠", "🤮😠", "😲😨", "😃", "😐", "😭", "😲😨"];
 
@@ -76,9 +74,6 @@ export const options = {
         color: "black",
       },
       ticks: {
-        // format: {
-        //   style: "percent",
-        // },
         callback: function (value, index, values) {
           return value + " %";
         },
@@ -101,10 +96,13 @@ function App() {
   } = useReactMediaRecorder({
     audio: true,
     askPermissionOnMount: true,
-    // blobPropertyBag: { type: "audio/webm" },
   });
 
   let [emotion, setEmotion] = useState([
+    {
+      name: "...",
+      values: [0, 0, 0, 0, 0, 0, 0],
+    },
     {
       name: "...",
       values: [0, 0, 0, 0, 0, 0, 0],
@@ -123,6 +121,7 @@ function App() {
     c1: [],
     c2: [],
     c3: [],
+    c4: [],
   });
 
   let [showClass, setShowClass] = useState(true);
@@ -175,14 +174,18 @@ function App() {
         "rgba(223, 255, 0, 1)",
         "rgba(223, 255, 0, 0.2)"
       );
-      // console.log(c1, c2);
+      const c4 = assignColor(
+        data.results[3].values,
+        "rgba(255, 127, 80 1)",
+        "rgba(255, 127, 80, 0.2)"
+      );
       setColor({
         c1: c1,
         c2: c2,
         c3: c3,
+        c4: c4,
       });
       console.timeEnd("update");
-      // console.log(data.results);
     } catch (err) {
       console.error("Failed to get emotion. ", err);
     }
@@ -190,10 +193,6 @@ function App() {
 
   const updateChart = async () => {
     let chunks = [];
-    // await register(await connect());
-    // const stream = new EMR(previewAudioStream, {
-    //   mimeType: "audio/wav",
-    // });
     const stream = new MediaRecorder(previewAudioStream);
     stream.ondataavailable = (e) => {
       chunks.push(e.data);
@@ -226,7 +225,7 @@ function App() {
       <h1>Real Time Speech Emotion Recognition</h1>
 
       <div>
-        <audio className="mx-auto my-10" src={mediaBlobUrl} controls />
+        <audio className="mx-auto my-10 " src={mediaBlobUrl} controls />
         <div className="text-2xl mb-3">
           <Timer status={status} />
         </div>
@@ -292,7 +291,7 @@ function App() {
         <div className="mt-5">
           <Bar
             data={{
-              labels: classes,
+              labels: classes_bar,
               backgroundColor: "rgba(255, 99, 132, 0.5)",
               datasets: [
                 {
@@ -315,6 +314,13 @@ function App() {
                   borderColor: "rgb(223, 255, 70)",
                   // backgroundColor: "rgba(0, 150, 255, 0.5)",
                   backgroundColor: color.c3,
+                },
+                {
+                  label: emotion[3].name,
+                  data: emotion[3].values,
+                  borderColor: "rgb(255, 127, 60)",
+                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
+                  backgroundColor: color.c4,
                 },
               ],
             }}

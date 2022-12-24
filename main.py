@@ -6,10 +6,12 @@ import trained_models.VGGish.predict as vggish
 # import trained_models.YAMNET.predict as yamnet
 import trained_models.VGG16.predict as vgg16
 import trained_models.HuBERT.predict as hubert
+from collections import Counter
 from timeit import default_timer as timer
-import os
 
-log = os.environ.get('LOG', False)
+# log = os.environ.get('LOG', False)
+# TODO: Change this to False in production
+log = True
 
 
 # neutral class for silent clips
@@ -26,6 +28,10 @@ silence = {
         },
         {
             "name": "VGG16",
+            "values": neutral
+        },
+        {
+            "name": "Meta",
             "values": neutral
         }
     ]
@@ -53,26 +59,34 @@ def get_emo(path):
     vgg16_res = vgg16.get_emotion(y, sr)
     hubert_res = hubert.get_emotion(y, sr)
 
+    vggish_emo = np.argmax(vggish_res['values'])
+    vgg16_emo = np.argmax(vgg16_res['values'])
+    hubert_emo = np.argmax(hubert_res['values'])
+
     if log:
         end = timer()
         with open('logs.txt', 'a') as f:
             f.write(f'{end - start}\n')
         time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
-        vggish_emo = np.argmax(vggish_res['values'])
-        hubert_emo = np.argmax(hubert_res['values'])
-        filename = f'{time}_{vggish_emo}_{hubert_emo}'
+        filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
         sf.write(f'./runs/{filename}.wav', y, sr)
 
     # Meta Model
-    # meta_values = hubert_res['values']
-    # meta_values[vggish_emo] += 5.0
-    # meta_res = {
-    #     'name': 'Meta Model',
-    #     'values': meta_values
-    # }
+    counts = Counter([vgg16_emo, vggish_emo, hubert_emo])
+    m = counts.most_common()
+    meta_values = [0.0] * 7
+    if m[0][1] == m[1][1]:
+        meta_values[hubert_emo] = 100.0
+    else:
+        meta_values[m[0][1]] = 100.0
+    meta_res = {
+        'name': 'Meta',
+        'values': meta_values
+    }
+    # print(meta_res)
 
     res = {
-        "results": [vggish_res, hubert_res, vgg16_res]
+        "results": [vggish_res, hubert_res, vgg16_res, meta_res]
     }
 
     return res
