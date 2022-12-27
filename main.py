@@ -3,14 +3,14 @@ import numpy as np
 from datetime import datetime
 import soundfile as sf
 import trained_models.VGGish.predict as vggish
-import trained_models.VGG16.predict as vgg16
+# import trained_models.VGG16.predict as vgg16
 import trained_models.HuBERT.predict as hubert
 from collections import Counter
 from timeit import default_timer as timer
 
 # log = os.environ.get('LOG', False)
 # TODO: Change this to False in production
-log = True
+log = False
 
 
 # neutral class for silent clips
@@ -55,11 +55,11 @@ def get_emo(path):
         return silence
 
     vggish_res = vggish.get_emotion(y, sr)
-    vgg16_res = vgg16.get_emotion(y, sr)
+    # vgg16_res = vgg16.get_emotion(y, sr)
     hubert_res = hubert.get_emotion(y, sr)
 
     vggish_emo = np.argmax(vggish_res['values'])
-    vgg16_emo = np.argmax(vgg16_res['values'])
+    # vgg16_emo = np.argmax(vgg16_res['values'])
     hubert_emo = np.argmax(hubert_res['values'])
 
     # Meta Model (Voting)
@@ -76,16 +76,16 @@ def get_emo(path):
     # }
 
     res = {
-        "results": [vggish_res, hubert_res, vgg16_res]
+        "results": [vggish_res, hubert_res, placeholder]
     }
 
     if log:
         end = timer()
         with open('logs.txt', 'a') as f:
             f.write(f'{end - start}\n')
-        time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
+        # time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
         # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}_{np.argmax(meta_values)}'
-        filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
-        sf.write(f'./runs/{filename}.wav', y, sr)
+        # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
+        # sf.write(f'./runs/{filename}.wav', y, sr)
 
     return res

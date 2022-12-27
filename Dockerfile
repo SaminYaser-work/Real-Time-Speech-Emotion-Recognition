@@ -1,4 +1,5 @@
-FROM nikolaik/python-nodejs:python3.10-nodejs16
+# FROM nikolaik/python-nodejs:python3.10-nodejs16
+FROM python:3.10.9-buster
 # RUN apk add --no-cache python3 py3-pip
 # RUN apt-get update || : && apt-get install python -y
 # RUN apt-get update && apt-get install -y software-properties-common gcc && \
