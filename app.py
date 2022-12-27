@@ -1,12 +1,12 @@
-from flask_cors import CORS
-from flask import Flask, request, json, render_template
+# from flask_cors import CORS
+from flask import Flask, request, json, render_template, jsonify
 import main
 from waitress import serve
 
 
 app = Flask(__name__, static_url_path='',
             static_folder='RTSER/dist', template_folder='./RTSER/dist')
-CORS(app)  # comment this on deployment
+# CORS(app)  # comment this on deployment
 
 # audio_file_path = './temp/audio.wav'
 audio_file_path = './temp/audio.webm'
@@ -27,6 +27,7 @@ def get_emo():
     except Exception as e:
         print('Error in server:', str(e))
         return app.response_class(response=json.dumps(e), status=500, mimetype='application/json')
+        # return app.response_class(response=jsonify(e), status=500, mimetype='application/json')
 
 
 if __name__ == '__main__':

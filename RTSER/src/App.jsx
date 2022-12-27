@@ -152,6 +152,7 @@ function App() {
         method: "post",
         body: fd,
       });
+      console.log(res);
       const data = await res.json();
       setEmotion(data.results);
       const c1 = assignColor(

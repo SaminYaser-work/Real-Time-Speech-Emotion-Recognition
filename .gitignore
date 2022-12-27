@@ -5,4 +5,5 @@ venv/
 runs
 .env
 pypackages
+pypackages2
 trained_models
