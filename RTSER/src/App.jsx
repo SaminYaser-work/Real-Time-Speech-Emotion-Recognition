@@ -107,16 +107,16 @@ function App() {
       name: "...",
       values: [0, 0, 0, 0, 0, 0, 0],
     },
-    {
-      name: "...",
-      values: [0, 0, 0, 0, 0, 0, 0],
-    },
+    // {
+    //   name: "...",
+    //   values: [0, 0, 0, 0, 0, 0, 0],
+    // },
   ]);
 
   let [color, setColor] = useState({
     c1: [],
     c2: [],
-    c3: [],
+    // c3: [],
   });
 
   let [showClass, setShowClass] = useState(true);
@@ -165,15 +165,15 @@ function App() {
         "rgba(0, 150, 255, 1)",
         "rgba(0, 150, 255, 0.2)"
       );
-      const c3 = assignColor(
-        data.results[2].values,
-        "rgba(223, 255, 0, 1)",
-        "rgba(223, 255, 0, 0.2)"
-      );
+      // const c3 = assignColor(
+      //   data.results[2].values,
+      //   "rgba(223, 255, 0, 1)",
+      //   "rgba(223, 255, 0, 0.2)"
+      // );
       setColor({
         c1: c1,
         c2: c2,
-        c3: c3,
+        // c3: c3,
       });
       console.timeEnd("update");
     } catch (err) {
@@ -296,12 +296,12 @@ function App() {
                   borderColor: "rgb(0, 71, 171)",
                   backgroundColor: color.c2,
                 },
-                {
-                  label: emotion[2].name,
-                  data: emotion[2].values,
-                  borderColor: "rgb(223, 255, 70)",
-                  backgroundColor: color.c3,
-                },
+                // {
+                //   label: emotion[2].name,
+                //   data: emotion[2].values,
+                //   borderColor: "rgb(223, 255, 70)",
+                //   backgroundColor: color.c3,
+                // },
               ],
             }}
             options={options}

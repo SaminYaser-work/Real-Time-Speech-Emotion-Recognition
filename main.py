@@ -1,10 +1,10 @@
 import librosa
+import trained_models.VGGish.predict as vggish
+import trained_models.HuBERT.predict as hubert
 # import numpy as np
 # from datetime import datetime
 # import soundfile as sf
-import trained_models.VGGish.predict as vggish
 # import trained_models.VGG16.predict as vgg16
-import trained_models.HuBERT.predict as hubert
 # from collections import Counter
 # from timeit import default_timer as timer
 
@@ -25,10 +25,10 @@ silence = {
             "name": "HuBERT",
             "values": neutral
         },
-        {
-            "name": "VGG16",
-            "values": neutral
-        },
+        # {
+        #     "name": "VGG16",
+        #     "values": neutral
+        # },
         # {
         #     "name": "Meta",
         #     "values": neutral
@@ -76,16 +76,16 @@ def get_emo(path):
     # }
 
     res = {
-        "results": [vggish_res, hubert_res, placeholder]
+        "results": [vggish_res, hubert_res]
     }
 
     # if log:
     #     end = timer()
     #     with open('logs.txt', 'a') as f:
     #         f.write(f'{end - start}\n')
-        # time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
-        # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}_{np.argmax(meta_values)}'
-        # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
-        # sf.write(f'./runs/{filename}.wav', y, sr)
+    # time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
+    # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}_{np.argmax(meta_values)}'
+    # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
+    # sf.write(f'./runs/{filename}.wav', y, sr)
 
     return res
