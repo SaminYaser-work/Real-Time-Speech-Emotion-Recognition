@@ -46,13 +46,6 @@ const classes = [
   "Fear / Surprised",
 ];
 
-colors = [
-  ["rgba(255, 99, 132, 1)", "rgba(255, 99, 132, 0.2)"],
-  ["rgba(0, 150, 255, 1)", "rgba(0, 150, 255, 0.2)"],
-  ["rgba(223, 255, 0, 1)", "rgba(223, 255, 0, 0.2)"],
-  ["rgba(255, 127, 80 1)", "rgba(255, 127, 80, 0.2)"],
-];
-
 export const options = {
   responsive: true,
   plugins: {
@@ -118,17 +111,12 @@ function App() {
       name: "...",
       values: [0, 0, 0, 0, 0, 0, 0],
     },
-    {
-      name: "...",
-      values: [0, 0, 0, 0, 0, 0, 0],
-    },
   ]);
 
   let [color, setColor] = useState({
     c1: [],
     c2: [],
     c3: [],
-    c4: [],
   });
 
   let [showClass, setShowClass] = useState(true);
@@ -181,16 +169,10 @@ function App() {
         "rgba(223, 255, 0, 1)",
         "rgba(223, 255, 0, 0.2)"
       );
-      const c4 = assignColor(
-        data.results[3].values,
-        "rgba(255, 127, 80 1)",
-        "rgba(255, 127, 80, 0.2)"
-      );
       setColor({
         c1: c1,
         c2: c2,
         c3: c3,
-        c4: c4,
       });
       console.timeEnd("update");
     } catch (err) {
@@ -284,7 +266,7 @@ function App() {
                 (e, i) =>
                   e.name != "..." && (
                     <tr key={i} className="text-4xl">
-                      <th>{e.name} : </th>
+                      <th className="font-bold ml-3">{e.name} : </th>
                       <th>
                         {classes[e.values.indexOf(Math.max(...e.values))]}
                       </th>
@@ -305,29 +287,19 @@ function App() {
                   label: emotion[0].name,
                   data: emotion[0].values,
                   borderColor: "rgb(255, 99, 132)",
-                  // backgroundColor: "rgba(255, 99, 132, 0.5)",
                   backgroundColor: color.c1,
                 },
                 {
                   label: emotion[1].name,
                   data: emotion[1].values,
                   borderColor: "rgb(0, 71, 171)",
-                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
                   backgroundColor: color.c2,
                 },
                 {
                   label: emotion[2].name,
                   data: emotion[2].values,
                   borderColor: "rgb(223, 255, 70)",
-                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
                   backgroundColor: color.c3,
-                },
-                {
-                  label: emotion[3].name,
-                  data: emotion[3].values,
-                  borderColor: "rgb(255, 127, 60)",
-                  // backgroundColor: "rgba(0, 150, 255, 0.5)",
-                  backgroundColor: color.c4,
                 },
               ],
             }}

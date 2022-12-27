@@ -27,6 +27,7 @@ classes = [
 ds = {
     'path': [],
     'vggish': [],
+    'vgg16': [],
     'hubert': [],
     'given_tag': []
 }
@@ -34,9 +35,10 @@ ds = {
 for dir, _, files in os.walk('./runs/'):
     for file in files:
         path = os.path.join(dir, file)
-        _, vggish, hubert = file.split('_')
+        _, vggish, vgg16, hubert = file.split('_')
         ds['path'].append(path)
         ds['vggish'].append(vggish)
+        ds['vgg16'].append(vgg16)
         ds['hubert'].append(hubert.removesuffix('.wav'))
         ds['given_tag'].append(-1)
 
@@ -44,7 +46,7 @@ for dir, _, files in os.walk('./runs/'):
 def get_info():
     info = ''
     for i in range(len(ds['path'])):
-        info += f'{i} {ds["vggish"][i]} {ds["hubert"][i]} {ds["given_tag"][i]}\n'
+        info += f'{i} {ds["vggish"][i]} {ds["vgg16"][i]} {ds["hubert"][i]} {ds["given_tag"][i]}\n'
     return info
 
 

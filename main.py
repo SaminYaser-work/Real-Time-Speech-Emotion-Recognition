@@ -3,7 +3,6 @@ import numpy as np
 from datetime import datetime
 import soundfile as sf
 import trained_models.VGGish.predict as vggish
-# import trained_models.YAMNET.predict as yamnet
 import trained_models.VGG16.predict as vgg16
 import trained_models.HuBERT.predict as hubert
 from collections import Counter
@@ -30,10 +29,10 @@ silence = {
             "name": "VGG16",
             "values": neutral
         },
-        {
-            "name": "Meta",
-            "values": neutral
-        }
+        # {
+        #     "name": "Meta",
+        #     "values": neutral
+        # }
     ]
 }
 
@@ -63,30 +62,30 @@ def get_emo(path):
     vgg16_emo = np.argmax(vgg16_res['values'])
     hubert_emo = np.argmax(hubert_res['values'])
 
+    # Meta Model (Voting)
+    # counts = Counter([vgg16_emo, vggish_emo, hubert_emo])
+    # m = counts.most_common()
+    # meta_values = [0.0] * 7
+    # if m[0][1] == m[1][1]:
+    #     meta_values[hubert_emo] = 100.0
+    # else:
+    #     meta_values[m[0][1]] = 100.0
+    # meta_res = {
+    #     'name': 'Meta',
+    #     'values': meta_values
+    # }
+
+    res = {
+        "results": [vggish_res, hubert_res, vgg16_res]
+    }
+
     if log:
         end = timer()
         with open('logs.txt', 'a') as f:
             f.write(f'{end - start}\n')
         time = datetime.now().strftime("%H:%M:%S").replace(':', '.')
+        # filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}_{np.argmax(meta_values)}'
         filename = f'{time}_{vggish_emo}_{vgg16_emo}_{hubert_emo}'
         sf.write(f'./runs/{filename}.wav', y, sr)
-
-    # Meta Model
-    counts = Counter([vgg16_emo, vggish_emo, hubert_emo])
-    m = counts.most_common()
-    meta_values = [0.0] * 7
-    if m[0][1] == m[1][1]:
-        meta_values[hubert_emo] = 100.0
-    else:
-        meta_values[m[0][1]] = 100.0
-    meta_res = {
-        'name': 'Meta',
-        'values': meta_values
-    }
-    # print(meta_res)
-
-    res = {
-        "results": [vggish_res, hubert_res, vgg16_res, meta_res]
-    }
 
     return res
