@@ -31,8 +31,9 @@ Then run the following command to start the application:
 ```bash
 docker run -dp 8000:8000 fo0d/real_time_speech_emotion_recognition:latest
 ```
+Visit `localhost:8000` through your browser to use the system!
 
-Change the port number if you want to use a different port. For example, if you want to use port 5000, then run the following command:
+If 8000 is being used by another application, change the port number if you want to use a different port. For example, if you want to use port 5000, then run the following command:
 ```bash
 docker run -dp 8000:5000 fo0d/real_time_speech_emotion_recognition:latest
 ```
