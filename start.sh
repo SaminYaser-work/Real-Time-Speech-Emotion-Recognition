@@ -9,4 +9,4 @@ echo
 echo "Starting Flask Server"
 echo "====================="
 cd .. &&
-    python -m flask run -h localhost -p 8000
+    python app.py
