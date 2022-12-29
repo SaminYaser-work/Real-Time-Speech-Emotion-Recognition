@@ -14,6 +14,11 @@ Then run the following command to start the application:
 ```bash
 ./start.sh
 ```
+Or, in windows
+```ps
+.\start.ps1
+```
+
 Visit `localhost:8000` to use the application.
 
 ## Docker
